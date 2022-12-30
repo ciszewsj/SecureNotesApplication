@@ -24,7 +24,7 @@
     <br>
 
     <label for="note">Note</label><br/>
-    <textarea id="note" name="note" autofocus="autofocus"></textarea> <br/>
+    <textarea id="note" name="note" th:field="*{note}" autofocus="autofocus"></textarea> <br/>
     <span class="validationError"
           th:if="${#fields.hasErrors('note')}"
           th:errors="*{note}">Note Error
@@ -32,7 +32,7 @@
     <br>
 
     <label for="password">Password (could be empty)</label><br/>
-    <input type="password" id="password" name="active"/><br/>
+    <input type="password" id="password" th:field="*{password}" name="active"/><br/>
     <span class="validationError"
           th:if="${#fields.hasErrors('password')}"
           th:errors="*{password}">Password Error

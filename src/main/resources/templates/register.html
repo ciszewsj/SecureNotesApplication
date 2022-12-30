@@ -24,7 +24,7 @@
     <br>
 
     <label for="email">Email</label><br/>
-    <input id="email" name="email" autofocus="autofocus"></input> <br/>
+    <input id="email" name="email" th:field="*{email}" autofocus="autofocus"></input> <br/>
     <span class="validationError"
           th:if="${#fields.hasErrors('email')}"
           th:errors="*{email}">Note Error
@@ -32,7 +32,7 @@
     <br>
 
     <label for="password">Password</label><br/>
-    <input type="password" id="password" name="active"/><br/>
+    <input type="password" id="password" th:field="*{password}" name="active"/><br/>
     <span class="validationError"
           th:if="${#fields.hasErrors('password')}"
           th:errors="*{password}">Password Error

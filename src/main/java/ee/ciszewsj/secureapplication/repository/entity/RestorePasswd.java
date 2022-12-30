@@ -1,16 +1,19 @@
 package ee.ciszewsj.secureapplication.repository.entity;
 
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import org.hibernate.validator.constraints.Length;
+
+import javax.persistence.*;
 import java.util.Date;
 
 @Entity
 public class RestorePasswd {
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Length(max = 100)
+	@Column(name = "uniq_value")
 	private String link;
 
 	private Date validTime;
