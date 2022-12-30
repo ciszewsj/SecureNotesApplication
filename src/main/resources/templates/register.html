@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<h1>Register</h1>
+<form method="post" th:object="${registerRequest}" th:action="@{/register}">
+
+    <div th:if="${#fields.hasErrors()}">
+        <span class="validationError">
+        Please correct the problems below and resubmit.
+        </span>
+    </div>
+
+    <label for="username">Username</label><br/>
+    <input type="text" id="username" name="username" th:field="*{username}" autofocus="autofocus"/> <br/>
+    <span class="validationError"
+          th:if="${#fields.hasErrors('username')}"
+          th:errors="*{username}">Username Error
+    </span>
+    <br>
+
+    <label for="email">Email</label><br/>
+    <input id="email" name="email" autofocus="autofocus"></input> <br/>
+    <span class="validationError"
+          th:if="${#fields.hasErrors('email')}"
+          th:errors="*{email}">Note Error
+    </span>
+    <br>
+
+    <label for="password">Password</label><br/>
+    <input type="password" id="password" name="active"/><br/>
+    <span class="validationError"
+          th:if="${#fields.hasErrors('password')}"
+          th:errors="*{password}">Password Error
+    </span>
+    <br>
+
+    <input type="submit" value="Create">
+
+</form>
+</body>
+</html>
