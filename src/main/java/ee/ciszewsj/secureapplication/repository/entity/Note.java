@@ -1,10 +1,14 @@
 package ee.ciszewsj.secureapplication.repository.entity;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 
 @Entity
+@Setter
+@Getter
 public class Note {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

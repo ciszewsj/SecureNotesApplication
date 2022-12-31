@@ -39,11 +39,6 @@ public class SecurityConfig {
 		return authProvider;
 	}
 
-//	@Bean
-//	public AuthenticationManager authenticationManager(AuthenticationManagerBuilder auth) throws Exception {
-//		return auth.authenticationProvider(authenticationProvider()).build();
-//	}
-
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http
@@ -58,20 +53,9 @@ public class SecurityConfig {
 				.deleteCookies("JSESSIONID")
 				.and()
 				.authorizeRequests()
-				.anyRequest().permitAll()
+				.antMatchers("/", "/login", "/register", "/perform_logout", "/login-error").permitAll()
+				.anyRequest().authenticated()
 				.and().httpBasic();
 		return http.build();
 	}
-
-
-//	@Bean
-//	public UserDetailsService userDetailsService() {
-//		UserDetails userDetails =
-//				User.withDefaultPasswordEncoder()
-//						.username("admin")
-//						.password("admin")
-//						.roles("admin")
-//						.build();
-//		return new InMemoryUserDetailsManager(userDetails);
-//	}
 }

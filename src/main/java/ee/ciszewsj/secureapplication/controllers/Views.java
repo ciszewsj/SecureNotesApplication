@@ -1,6 +1,9 @@
 package ee.ciszewsj.secureapplication.controllers;
 
 import ee.ciszewsj.secureapplication.data.CreateNoteRequest;
+import ee.ciszewsj.secureapplication.repository.entity.Note;
+import ee.ciszewsj.secureapplication.repository.repositories.NoteRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,7 +15,10 @@ import javax.validation.Valid;
 
 @Controller
 @Slf4j
+@RequiredArgsConstructor
 public class Views {
+	private final NoteRepository noteRepository;
+
 	@GetMapping("/")
 	public String getMain() {
 		return "main";
@@ -29,6 +35,10 @@ public class Views {
 		if (errors.hasErrors()) {
 			return "create_note";
 		}
+		Note note = new Note();
+		note.setName(createNoteRequest.getName());
+		note.setNote(createNoteRequest.getNote());
+		note.setIsEncrypted(false);
 		return "redirect:/";
 	}
 }
