@@ -63,6 +63,7 @@ public class AuthenticationController {
 		if (errors.hasErrors()) {
 			return "register";
 		}
+//		if (userRepository.findByUsername(registerRequest.getUsername()))
 		User user = new User();
 		user.setUsername(registerRequest.getUsername());
 		user.setEmail(registerRequest.getEmail());

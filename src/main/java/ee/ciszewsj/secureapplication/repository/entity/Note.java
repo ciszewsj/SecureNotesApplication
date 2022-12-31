@@ -17,7 +17,7 @@ public class Note {
 	@Length(max = 64)
 	private String name;
 
-	@Length(max = 4096)
+	@Length(max = 10000)
 	private String note;
 
 	private Boolean isEncrypted;

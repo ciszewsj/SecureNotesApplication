@@ -11,8 +11,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.crypto.Cipher;
@@ -26,7 +26,8 @@ public class Views {
 	private final AESService aesService;
 
 	@GetMapping("/")
-	public String getMain() {
+	public String getMain(Model model) {
+		model.addAttribute("notes", noteRepository.findAll());
 		return "main";
 	}
 
@@ -35,6 +36,23 @@ public class Views {
 		model.addAttribute("createNoteRequest", new CreateNoteRequest());
 		return "create_note";
 	}
+
+	@GetMapping("/show_note/{note_id}")
+	public String getShowNote(Model model, @PathVariable("note_id") Long noteId) {
+		Note note = noteRepository.findById(noteId).orElse(null);
+		if (note == null) {
+			model.addAttribute("element_not_found", true);
+			return "main";
+		}
+		model.addAttribute("note", note);
+		return "show_note";
+	}
+
+	@PostMapping("/show_note/{note_id}")
+	public String postShowNote(@PathVariable("note_id") Long noteId) {
+		return "show_note";
+	}
+
 
 	@PostMapping("/create_note")
 	public String postCreateNote(@AuthenticationPrincipal User user, @Valid CreateNoteRequest createNoteRequest, Errors errors) {
@@ -51,7 +69,7 @@ public class Views {
 				log.error(e.toString());
 				return "create_note";
 			}
-			note.setIsEncrypted(false);
+			note.setIsEncrypted(true);
 		} else {
 			note.setNote(createNoteRequest.getNote());
 			note.setIsEncrypted(false);
