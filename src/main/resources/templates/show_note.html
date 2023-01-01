@@ -8,13 +8,21 @@
 <h1>Title:
     <div th:text="${note.name}"></div>
 </h1>
+<ul>
+    <li sec:authorize="isAuthenticated()">Wellcome, <span sec:authentication="name"></span></li>
+    <li><a class="nav-link" href="/">Main</a></li>
+    <li sec:authorize="isAnonymous()"><a class="nav-link" href="/login">Login</a></li>
+    <li sec:authorize="isAnonymous()"><a class="nav-link" href="/register">Register</a></li>
+    <li sec:authorize="isAuthenticated()"><a class="nav-link" href="/create_note">Create notes</a></li>
+    <li sec:authorize="isAuthenticated()"><a class="nav-link" href="/perform_logout">Logout</a></li>
+</ul>
 
 <h3>Author:
     <div th:text="${note.user.username}"></div>
 </h3>
 
 <p>
-    <div th:text="${note.note}"></div>
+<div th:utext="${note.note}"></div>
 </p>
 </body>
 </html>

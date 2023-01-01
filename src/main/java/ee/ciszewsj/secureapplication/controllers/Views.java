@@ -5,6 +5,7 @@ import ee.ciszewsj.secureapplication.repository.entity.Note;
 import ee.ciszewsj.secureapplication.repository.entity.User;
 import ee.ciszewsj.secureapplication.repository.repositories.NoteRepository;
 import ee.ciszewsj.secureapplication.services.AESService;
+import ee.ciszewsj.secureapplication.services.HtmlSanitizer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -24,6 +25,7 @@ import javax.validation.Valid;
 public class Views {
 	private final NoteRepository noteRepository;
 	private final AESService aesService;
+	private final HtmlSanitizer htmlSanitizer;
 
 	@GetMapping("/")
 	public String getMain(Model model) {
@@ -61,9 +63,10 @@ public class Views {
 		}
 		Note note = new Note();
 		note.setName(createNoteRequest.getName());
+		String note_text = htmlSanitizer.sanitize(createNoteRequest.getNote());
 		if (createNoteRequest.getPassword().length() > 0) {
 			try {
-				String result = aesService.doAction(createNoteRequest.getPassword(), createNoteRequest.getNote(), Cipher.ENCRYPT_MODE);
+				String result = aesService.doAction(createNoteRequest.getPassword(), note_text, Cipher.ENCRYPT_MODE);
 				note.setNote(result);
 			} catch (Exception e) {
 				log.error(e.toString());
@@ -71,7 +74,7 @@ public class Views {
 			}
 			note.setIsEncrypted(true);
 		} else {
-			note.setNote(createNoteRequest.getNote());
+			note.setNote(note_text);
 			note.setIsEncrypted(false);
 		}
 		note.setUser(user);
