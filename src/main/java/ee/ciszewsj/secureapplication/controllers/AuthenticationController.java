@@ -17,7 +17,6 @@ import ee.ciszewsj.secureapplication.services.IpService;
 import ee.ciszewsj.secureapplication.services.LoginAttemptService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -82,6 +81,16 @@ public class AuthenticationController {
 
 	@PostMapping("/register")
 	public String postCreateNote(@Valid RegisterRequest registerRequest, Errors errors, Model model) throws InterruptedException {
+		if (loginAttemptService.isBlocked(ipService.getClientIP())) {
+			model.addAttribute("registerError", true);
+			return "register";
+		}
+
+		if (registerRequest.getShoeSize() != null && registerRequest.getShoeSize()) {
+			log.error("BOT");
+			loginAttemptService.block(ipService.getClientIP());
+		}
+
 		if (errors.hasErrors()) {
 			return "register";
 		}
@@ -147,6 +156,17 @@ public class AuthenticationController {
 	@PostMapping("/restore-passwd")
 	public String postResetPassword(Model model, RestorePasswordRequest restorePasswordRequest) throws InterruptedException {
 		Thread.sleep(3000);
+		if (loginAttemptService.isBlocked(ipService.getClientIP())) {
+			model.addAttribute("registerError", true);
+			return "register";
+		}
+
+		if (restorePasswordRequest.getShoeSize() != null && restorePasswordRequest.getShoeSize()) {
+			log.error("BOT");
+			loginAttemptService.block(ipService.getClientIP());
+		}
+
+
 		User user = userRepository.findFirstByEmailIgnoreCase(restorePasswordRequest.getEmail()).orElse(null);
 		if (user == null) {
 			model.addAttribute("error", true);
@@ -182,6 +202,17 @@ public class AuthenticationController {
 
 	@PostMapping("/reset_passwd/{id}")
 	public String postResetHardPasswordForm(@Valid ResetPasswdRequest resetPasswdRequest, Errors errors, Model model, @PathVariable("id") String uid) throws InterruptedException {
+
+		if (loginAttemptService.isBlocked(ipService.getClientIP())) {
+			model.addAttribute("registerError", true);
+			return "register";
+		}
+
+		if (resetPasswdRequest.getShoeSize() != null && resetPasswdRequest.getShoeSize()) {
+			log.error("BOT");
+			loginAttemptService.block(ipService.getClientIP());
+		}
+
 		model.addAttribute("uuid", uid);
 		model.addAttribute("resetPasswdRequest", new ResetPasswdRequest());
 		if (errors.hasErrors()) {
