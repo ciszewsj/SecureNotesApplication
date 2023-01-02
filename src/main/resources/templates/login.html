@@ -27,6 +27,12 @@
     <input type="submit" value="Log in">
 </form>
 
+<a href="/reset-passwd">Reset Password</a>
+
+<script th:if="${uuid}" th:inline="javascript">
+    var uuid = /*[[${uuid}]]*/ 'ERROR';
+    console.log("Aby aktywować konto wejdź na link: " + uuid);
+</script>
 
 </body>
 </html>

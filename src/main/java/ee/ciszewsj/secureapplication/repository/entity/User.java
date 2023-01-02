@@ -25,6 +25,8 @@ public class User implements UserDetails {
 	@Length(max = 100)
 	private String password;
 
+	private Boolean isValid = false;
+
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		return null;
@@ -57,6 +59,6 @@ public class User implements UserDetails {
 
 	@Override
 	public boolean isEnabled() {
-		return true;
+		return isValid;
 	}
 }
