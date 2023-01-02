@@ -17,7 +17,7 @@
 </ul>
 <form method="post" th:object="${registerRequest}" th:action="@{/register}">
 
-    <p th:if="${registerError}" class="error">Account with username or password exists</p>
+    <p th:if="${registerError}" class="error">Account with username or email exists</p>
 
     <div th:if="${#fields.hasErrors()}">
         <span class="validationError">

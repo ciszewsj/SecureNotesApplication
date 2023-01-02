@@ -7,8 +7,8 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificationExecutor<User> {
-	Optional<User> findByUsernameContainingIgnoreCase(String username);
+	Optional<User> findFirstByUsernameIgnoreCase(String username);
 
-	Optional<User> findByEmailContainingIgnoreCase(String email);
+	Optional<User> findFirstByEmailIgnoreCase(String email);
 
 }

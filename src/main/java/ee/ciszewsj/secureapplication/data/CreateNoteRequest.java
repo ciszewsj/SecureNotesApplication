@@ -19,4 +19,7 @@ public class CreateNoteRequest {
 	@Size(max = 32)
 	@NotNull
 	private String password;
+
+	@NotNull
+	private Boolean isPublic;
 }

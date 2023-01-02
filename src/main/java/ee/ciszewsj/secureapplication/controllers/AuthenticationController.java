@@ -6,7 +6,6 @@ import ee.ciszewsj.secureapplication.repository.entity.User;
 import ee.ciszewsj.secureapplication.repository.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,10 +19,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import javax.persistence.criteria.Predicate;
 
 @Controller
 @Slf4j
@@ -67,8 +62,8 @@ public class AuthenticationController {
 		}
 		Thread.sleep(3000);
 
-		if (userRepository.findByUsernameContainingIgnoreCase(registerRequest.getUsername()).isPresent()
-				|| userRepository.findByEmailContainingIgnoreCase(registerRequest.getEmail()).isPresent()) {
+		if (userRepository.findFirstByUsernameIgnoreCase(registerRequest.getUsername()).isPresent()
+				|| userRepository.findFirstByEmailIgnoreCase(registerRequest.getEmail()).isPresent()) {
 			model.addAttribute("registerError", true);
 			return "register";
 		}

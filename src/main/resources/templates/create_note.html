@@ -48,6 +48,14 @@
     </span>
     <br>
 
+    <label for="isPublic">Should be public</label><br/>
+    <input type="checkbox" id="isPublic" name="isPublic" th:field="*{isPublic}" th:checked="${flag} ? 'checked'">
+    <span class="validationError"
+          th:if="${#fields.hasErrors('isPublic')}"
+          th:errors="*{isPublic}">Password Error
+    </span>
+    <br>
+
     <input type="submit" value="Create">
 
 </form>
