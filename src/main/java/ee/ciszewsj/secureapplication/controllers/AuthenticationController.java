@@ -67,19 +67,6 @@ public class AuthenticationController {
 		}
 		Thread.sleep(3000);
 
-
-		Specification<User> userMethod = (root, query, builder) -> {
-			List<Predicate> predicates = new ArrayList<>();
-			if (registerRequest.getUsername() != null) {
-				predicates.add(builder.like(root.get("username"), registerRequest.getUsername().toUpperCase(Locale.ROOT)));
-			}
-			if (registerRequest.getEmail() != null) {
-				predicates.add(builder.like(root.get("email"), registerRequest.getEmail().toUpperCase(Locale.ROOT)));
-			}
-			return builder.and(predicates.toArray(new Predicate[0]));
-		};
-
-
 		if (userRepository.findByUsernameContainingIgnoreCase(registerRequest.getUsername()).isPresent()
 				|| userRepository.findByEmailContainingIgnoreCase(registerRequest.getEmail()).isPresent()) {
 			model.addAttribute("registerError", true);

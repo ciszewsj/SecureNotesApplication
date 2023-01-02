@@ -22,6 +22,7 @@
         Please correct the problems below and resubmit.
         </span>
     </div>
+    <p th:if="${createNoteError}" class="error">ERROR SERVER</p>
 
     <label for="name">Note name</label><br/>
     <input type="text" id="name" name="name" th:field="*{name}" autofocus="autofocus"/> <br/>
