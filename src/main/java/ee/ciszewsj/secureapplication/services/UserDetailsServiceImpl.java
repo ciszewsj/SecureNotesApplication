@@ -2,6 +2,7 @@ package ee.ciszewsj.secureapplication.services;
 
 import ee.ciszewsj.secureapplication.repository.entity.User;
 import ee.ciszewsj.secureapplication.repository.repositories.UserRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,9 +10,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-import javax.servlet.http.HttpServletRequest;
-
 @Slf4j
+@RequiredArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
 	@Autowired
 	private UserRepository userRepository;
@@ -19,16 +19,14 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 	@Autowired
 	private LoginAttemptService loginAttemptService;
 
-	@Autowired
-	private HttpServletRequest request;
+	private final IpService ipService;
 
 	@SneakyThrows
 	@Override
 	public UserDetails loadUserByUsername(String username)
 			throws UsernameNotFoundException {
 
-		String ip = getClientIP();
-		log.error(ip);
+		String ip = ipService.getClientIP();
 		if (loginAttemptService.isBlocked(ip)) {
 			log.error("USER IS BLOCKED");
 			throw new UsernameNotFoundException("Could not find user");
@@ -43,11 +41,5 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 		return user;
 	}
 
-	private String getClientIP() {
-		String xfHeader = request.getHeader("X-Forwarded-For");
-		if (xfHeader == null) {
-			return request.getRemoteAddr();
-		}
-		return xfHeader.split(",")[0];
-	}
+
 }

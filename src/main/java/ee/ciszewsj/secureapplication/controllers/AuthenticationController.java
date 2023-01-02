@@ -11,6 +11,8 @@ import ee.ciszewsj.secureapplication.repository.repositories.ActivateAccReposito
 import ee.ciszewsj.secureapplication.repository.repositories.RestorePasswdRepository;
 import ee.ciszewsj.secureapplication.repository.repositories.UserRepository;
 import ee.ciszewsj.secureapplication.services.DateService;
+import ee.ciszewsj.secureapplication.services.IpService;
+import ee.ciszewsj.secureapplication.services.LoginAttemptService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -40,6 +42,8 @@ public class AuthenticationController {
 	private final ActivateAccRepository activateAccRepository;
 	private final RestorePasswdRepository restorePasswdRepository;
 	private final DateService dateService;
+	private final LoginAttemptService loginAttemptService;
+	private final IpService ipService;
 
 	@GetMapping("/login")
 	public String getLogin(Model model) {
@@ -50,6 +54,9 @@ public class AuthenticationController {
 	@GetMapping("/login-error")
 	public String loginError(Model model) {
 		model.addAttribute("loginError", true);
+		if (loginAttemptService.isBlocked(ipService.getClientIP())) {
+			model.addAttribute("isBlocked", true);
+		}
 		return "login";
 	}
 
