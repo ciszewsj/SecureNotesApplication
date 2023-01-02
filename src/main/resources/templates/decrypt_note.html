@@ -28,7 +28,7 @@
     <p th:if="${createNoteError}" class="error">ERROR SERVER</p>
 
     <label for="password">Note password</label><br/>
-    <input type="text" id="password" name="password" th:field="*{password}" autofocus="autofocus"/> <br/>
+    <input type="password" id="password" name="password" th:field="*{password}" autofocus="autofocus"/> <br/>
     <span class="validationError"
           th:if="${#fields.hasErrors('password')}"
           th:errors="*{password}">Password Error

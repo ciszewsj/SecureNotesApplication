@@ -69,6 +69,7 @@ public class Views {
 	@PostMapping("/show_note/{note_id}")
 	public String postShowNote(@AuthenticationPrincipal User user, @PathVariable("note_id") Long noteId, Model model, DecryptRequest decryptRequest) {
 		noteAccessVerifier.addNotes(user, model);
+		model.addAttribute("id", noteId);
 
 		Note note = noteRepository.findById(noteId).orElse(null);
 		if (note == null) {
@@ -90,6 +91,7 @@ public class Views {
 		} catch (Exception e) {
 			e.printStackTrace();
 			model.addAttribute("error", true);
+
 			return "decrypt_note";
 		}
 		model.addAttribute("note", note);

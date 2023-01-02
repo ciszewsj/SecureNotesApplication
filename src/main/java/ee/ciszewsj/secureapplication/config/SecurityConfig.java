@@ -1,7 +1,5 @@
 package ee.ciszewsj.secureapplication.config;
 
-import com.google.common.io.CharStreams;
-import ee.ciszewsj.secureapplication.data.LoginRequest;
 import ee.ciszewsj.secureapplication.repository.entity.LoginLog;
 import ee.ciszewsj.secureapplication.repository.entity.User;
 import ee.ciszewsj.secureapplication.repository.repositories.LoginLogRepository;
@@ -26,13 +24,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.SecureRandom;
 import java.util.Date;
-import java.util.stream.Collectors;
 
 @Configuration
 @EnableWebSecurity
@@ -74,7 +69,8 @@ public class SecurityConfig {
 				.and()
 				.authorizeRequests()
 				.antMatchers("/", "/login", "/register", "/perform_logout", "/login-error",
-						"/activate/*", "/restore-passwd", "/reset_passwd/*").permitAll()
+						"/activate/*", "/restore-passwd", "/reset_passwd/*", "/js/**", "/static/**",
+						"/resources/**").permitAll()
 				.anyRequest().authenticated()
 				.and().httpBasic();
 		return http.build();
