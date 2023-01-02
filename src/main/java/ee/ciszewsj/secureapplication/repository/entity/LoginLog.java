@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Getter
@@ -21,6 +22,8 @@ public class LoginLog {
 
 	@Column(length = 255)
 	private String result;
+
+	private String date;
 
 	@ManyToOne
 	private User user;

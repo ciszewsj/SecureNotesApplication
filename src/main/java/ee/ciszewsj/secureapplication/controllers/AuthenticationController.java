@@ -5,9 +5,11 @@ import ee.ciszewsj.secureapplication.data.RegisterRequest;
 import ee.ciszewsj.secureapplication.data.ResetPasswdRequest;
 import ee.ciszewsj.secureapplication.data.RestorePasswordRequest;
 import ee.ciszewsj.secureapplication.repository.entity.ActivateAccount;
+import ee.ciszewsj.secureapplication.repository.entity.LoginLog;
 import ee.ciszewsj.secureapplication.repository.entity.RestorePasswd;
 import ee.ciszewsj.secureapplication.repository.entity.User;
 import ee.ciszewsj.secureapplication.repository.repositories.ActivateAccRepository;
+import ee.ciszewsj.secureapplication.repository.repositories.LoginLogRepository;
 import ee.ciszewsj.secureapplication.repository.repositories.RestorePasswdRepository;
 import ee.ciszewsj.secureapplication.repository.repositories.UserRepository;
 import ee.ciszewsj.secureapplication.services.DateService;
@@ -15,7 +17,9 @@ import ee.ciszewsj.secureapplication.services.IpService;
 import ee.ciszewsj.secureapplication.services.LoginAttemptService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
@@ -44,6 +48,7 @@ public class AuthenticationController {
 	private final DateService dateService;
 	private final LoginAttemptService loginAttemptService;
 	private final IpService ipService;
+	private final LoginLogRepository loginLogRepository;
 
 	@GetMapping("/login")
 	public String getLogin(Model model) {
@@ -121,6 +126,15 @@ public class AuthenticationController {
 		a.setIsValid(true);
 		userRepository.save(a);
 		activateAccRepository.delete(activateAcc);
+
+
+		LoginLog loginLog = new LoginLog();
+		loginLog.setOperation("activate");
+		loginLog.setResult("SUCCESS");
+		loginLog.setUser(a);
+		loginLog.setDate(new Date().toString());
+		loginLogRepository.save(loginLog);
+
 		return "redirect:/login";
 	}
 
@@ -148,6 +162,13 @@ public class AuthenticationController {
 			model.addAttribute("error", true);
 			return "restore_passwd";
 		}
+
+		LoginLog loginLog = new LoginLog();
+		loginLog.setOperation("Reset_passwd_request");
+		loginLog.setResult("REQUESTED");
+		loginLog.setUser(user);
+		loginLog.setDate(new Date().toString());
+		loginLogRepository.save(loginLog);
 
 		return "login";
 	}
@@ -185,6 +206,20 @@ public class AuthenticationController {
 
 		restorePasswdRepository.delete(restorePasswd);
 
+		LoginLog loginLog = new LoginLog();
+		loginLog.setOperation("reset_passwd");
+		loginLog.setResult("SUCCESS");
+		loginLog.setUser(user);
+		loginLog.setDate(new Date().toString());
+		loginLogRepository.save(loginLog);
+
 		return "redirect:/login";
+	}
+
+	@GetMapping("/logs")
+	public String getLogs(Model model, @AuthenticationPrincipal User user) {
+
+		model.addAttribute("loginLog", loginLogRepository.findAllByUserId(user.getId()));
+		return "loggin_log";
 	}
 }

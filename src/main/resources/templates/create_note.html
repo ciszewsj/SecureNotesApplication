@@ -32,7 +32,8 @@
     </span>
     <br>
 
-    <label for="note">Note</label><br/>
+    <label for="note">Note Dozwolone elementy : {"a" z "href", "p", "div", "i", "b", "em", "blockquote", "tt", "strong",
+        "br", "ul", "ol", "li", "quote", "ecode", "img" z "src", "h1", "h2", "h3", "h4", "h5"}</label><br/>
     <textarea id="note" name="note" th:field="*{note}" autofocus="autofocus"></textarea> <br/>
     <span class="validationError"
           th:if="${#fields.hasErrors('note')}"

@@ -18,7 +18,7 @@
 <div sec:authorize="isAuthenticated()">
     <h3>MY NOTES:</h3>
     <ul>
-        <tr th:each="note : ${my_notes}">
+        <tr th:each="note : ${notes}">
             <li>
 
                 <div>Title: <label th:text="${note.name}"></label></div>
@@ -30,7 +30,7 @@
     </ul>
     <h3>ACCESS GRANTED NOTES:</h3>
     <ul>
-        <tr th:each="note : ${access_granted}">
+        <tr th:each="note : ${my_notes}">
             <li>
 
                 <div>Title: <label th:text="${note.name}"></label></div>
@@ -43,7 +43,7 @@
 </div>
 <h3>PUBLIC NOTES:</h3>
 <ul>
-    <tr th:each="note : ${public_notes}">
+    <tr th:each="note : ${notes}">
         <li>
 
             <div>Title: <label th:text="${note.name}"></label></div>

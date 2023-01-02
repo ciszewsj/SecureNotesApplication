@@ -3,6 +3,7 @@ package ee.ciszewsj.secureapplication.services;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import ee.ciszewsj.secureapplication.repository.repositories.LoginLogRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.ExecutionException;
