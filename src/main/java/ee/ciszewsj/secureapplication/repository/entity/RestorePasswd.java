@@ -1,15 +1,20 @@
 package ee.ciszewsj.secureapplication.repository.entity;
 
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.UUID;
 
 @Entity
+@Setter
+@Getter
 public class RestorePasswd {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private UUID id;
+	@Column(name = "id", length = 36, unique = true, nullable = false)
+	private String id = UUID.randomUUID().toString();
 
 	private Date validTime;
 

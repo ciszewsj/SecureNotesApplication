@@ -48,7 +48,8 @@ public class SecurityConfig {
 				.deleteCookies("JSESSIONID")
 				.and()
 				.authorizeRequests()
-				.antMatchers("/", "/login", "/register", "/perform_logout", "/login-error", "/activate/*").permitAll()
+				.antMatchers("/", "/login", "/register", "/perform_logout", "/login-error",
+						"/activate/*", "/restore-passwd", "/reset_passwd/*").permitAll()
 				.anyRequest().authenticated()
 				.and().httpBasic();
 		return http.build();

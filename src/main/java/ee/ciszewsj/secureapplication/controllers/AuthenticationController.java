@@ -2,9 +2,13 @@ package ee.ciszewsj.secureapplication.controllers;
 
 import ee.ciszewsj.secureapplication.data.LoginRequest;
 import ee.ciszewsj.secureapplication.data.RegisterRequest;
+import ee.ciszewsj.secureapplication.data.ResetPasswdRequest;
+import ee.ciszewsj.secureapplication.data.RestorePasswordRequest;
 import ee.ciszewsj.secureapplication.repository.entity.ActivateAccount;
+import ee.ciszewsj.secureapplication.repository.entity.RestorePasswd;
 import ee.ciszewsj.secureapplication.repository.entity.User;
 import ee.ciszewsj.secureapplication.repository.repositories.ActivateAccRepository;
+import ee.ciszewsj.secureapplication.repository.repositories.RestorePasswdRepository;
 import ee.ciszewsj.secureapplication.repository.repositories.UserRepository;
 import ee.ciszewsj.secureapplication.services.DateService;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +38,7 @@ public class AuthenticationController {
 	private final PasswordEncoder passwordEncoder;
 	private final UserRepository userRepository;
 	private final ActivateAccRepository activateAccRepository;
+	private final RestorePasswdRepository restorePasswdRepository;
 	private final DateService dateService;
 
 	@GetMapping("/login")
@@ -112,8 +117,67 @@ public class AuthenticationController {
 		return "redirect:/login";
 	}
 
-	@GetMapping("reset-passwd")
-	public String getResetPassword() {
+	@GetMapping("/restore-passwd")
+	public String getResetPassword(Model model) {
+		model.addAttribute("restorePasswordRequest", new RestorePasswordRequest());
+		return "restore_passwd";
+	}
 
+	@PostMapping("/restore-passwd")
+	public String postResetPassword(Model model, RestorePasswordRequest restorePasswordRequest) throws InterruptedException {
+		Thread.sleep(3000);
+		User user = userRepository.findFirstByEmailIgnoreCase(restorePasswordRequest.getEmail()).orElse(null);
+		if (user == null) {
+			model.addAttribute("error", true);
+			return "restore_passwd";
+		}
+		try {
+			RestorePasswd restorePasswd = new RestorePasswd();
+			restorePasswd.setUser(user);
+			restorePasswd.setValidTime(dateService.getValidDate());
+			restorePasswdRepository.save(restorePasswd);
+			model.addAttribute("reset", "/reset_passwd/" + restorePasswd.getId());
+		} catch (Exception e) {
+			model.addAttribute("error", true);
+			return "restore_passwd";
+		}
+
+		return "login";
+	}
+
+	@GetMapping("/reset_passwd/{id}")
+	public String getResetHardPasswordForm(Model model, @PathVariable("id") String uid) {
+		model.addAttribute("uuid", uid);
+		model.addAttribute("resetPasswdRequest", new ResetPasswdRequest());
+		return "reset_passwd";
+	}
+
+	@PostMapping("/reset_passwd/{id}")
+	public String postResetHardPasswordForm(@Valid ResetPasswdRequest resetPasswdRequest, Errors errors, Model model, @PathVariable("id") String uid) throws InterruptedException {
+		model.addAttribute("uuid", uid);
+		model.addAttribute("resetPasswdRequest", new ResetPasswdRequest());
+		if (errors.hasErrors()) {
+			return "reset_passwd";
+		}
+
+		Thread.sleep(3000);
+
+		RestorePasswd restorePasswd = restorePasswdRepository.findById(uid).orElse(null);
+		if (restorePasswd == null) {
+			model.addAttribute("error", true);
+			return "reset_passwd";
+		}
+		if (restorePasswd.getValidTime().compareTo(new Date()) < 0) {
+			model.addAttribute("error", true);
+			return "reset_passwd";
+		}
+
+		User user = restorePasswd.getUser();
+		user.setPassword(passwordEncoder.encode(resetPasswdRequest.getPassword()));
+		userRepository.save(user);
+
+		restorePasswdRepository.delete(restorePasswd);
+
+		return "redirect:/login";
 	}
 }
