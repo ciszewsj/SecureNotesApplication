@@ -36,30 +36,32 @@
     <br>
 
     <input type="submit" value="Decrypt">
-    <div th:if="${owner}">
-        <h3>Granted Access:</h3>
-        <ul>
-            <tr th:each="user : ${addedUsers}">
-                <li>
 
-                    <div><label th:text="${user.username}"></label></div>
-
-                </li>
-            </tr>
-        </ul>
-
-        <h3>Add player:</h3>
-        <form method="post" th:object="${addPlayerAccess}" th:action="@{/add_player/} + ${id}">
-            <label for="name">Username</label><br/>
-            <input type="text" id="name" name="name" th:field="*{name}" autofocus="autofocus"/> <br/>
-            <span class="validationError"
-                  th:if="${#fields.hasErrors('name')}"
-                  th:errors="*{name}">Username Error
-       </span>
-            <br/>
-            <input type="submit" value="Add player">
-        </form>
-    </div>
 </form>
+
+<div th:if="${owner}">
+    <h3>Granted Access:</h3>
+    <ul>
+        <tr th:each="user : ${addedUsers}">
+            <li>
+
+                <div><label th:text="${user.name}"></label></div>
+
+            </li>
+        </tr>
+    </ul>
+
+    <h3>Add player:</h3>
+    <form method="post" th:object="${addPlayerAccess}" th:action="@{/add_player/} + ${id}">
+        <label for="name">Username</label><br/>
+        <input type="text" id="name" name="name" th:field="*{name}" autofocus="autofocus"/> <br/>
+        <span class="validationError"
+              th:if="${#fields.hasErrors('name')}"
+              th:errors="*{name}">Username Error
+       </span>
+        <br/>
+        <input type="submit" value="Add player">
+    </form>
+</div>
 </body>
 </html>

@@ -5,6 +5,8 @@ import ee.ciszewsj.secureapplication.data.CreateNoteRequest;
 import ee.ciszewsj.secureapplication.data.DecryptRequest;
 import ee.ciszewsj.secureapplication.repository.entity.Note;
 import ee.ciszewsj.secureapplication.repository.entity.User;
+import ee.ciszewsj.secureapplication.repository.entity.UserWithAccess;
+import ee.ciszewsj.secureapplication.repository.repositories.AccessGrantedRepository;
 import ee.ciszewsj.secureapplication.repository.repositories.NoteRepository;
 import ee.ciszewsj.secureapplication.repository.repositories.UserRepository;
 import ee.ciszewsj.secureapplication.services.AESService;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.validation.Valid;
+import java.util.Locale;
 import java.util.Objects;
 
 @Controller
@@ -28,7 +31,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class Views {
 	private final NoteRepository noteRepository;
-	private final UserRepository userRepository;
+	private final AccessGrantedRepository accessGrantedRepository;
 	private final AESService aesService;
 	private final HtmlSanitizer htmlSanitizer;
 	private final NoteAccessVerifier noteAccessVerifier;
@@ -67,7 +70,7 @@ public class Views {
 	}
 
 	@PostMapping("/show_note/{note_id}")
-	public String postShowNote(@AuthenticationPrincipal User user, @PathVariable("note_id") Long noteId, Model model, DecryptRequest decryptRequest) {
+	public String postShowNote(@AuthenticationPrincipal User user, @PathVariable("note_id") Long noteId, Model model, @Valid DecryptRequest decryptRequest, Errors errors) {
 		noteAccessVerifier.addNotes(user, model);
 		model.addAttribute("id", noteId);
 
@@ -85,6 +88,11 @@ public class Views {
 		if (!note.getIsEncrypted()) {
 			return "redirect:/show_note/" + noteId;
 		}
+		if (errors.hasErrors()) {
+			model.addAttribute("error", true);
+
+			return "decrypt_note";
+		}
 		try {
 			Thread.sleep(1000);
 			note.setNote(aesService.decrypt(decryptRequest.getPassword(), note.getNote()));
@@ -100,11 +108,11 @@ public class Views {
 
 	@PostMapping("/add_player/{note_id}")
 	public String postAddPlayer(@AuthenticationPrincipal User user, @PathVariable("note_id") Long noteId,
-	                            @Valid AddPlayerAccess addPlayerAccess, Model model) {
+	                            @Valid AddPlayerAccess addPlayerAccess, Errors errors, Model model) {
 		noteAccessVerifier.addNotes(user, model);
 
 		Note note = noteRepository.findById(noteId).orElse(null);
-		if (note == null) {
+		if (note == null || errors.hasErrors()) {
 			model.addAttribute("element_not_found", true);
 			return "main";
 		}
@@ -119,14 +127,17 @@ public class Views {
 			return "main";
 		}
 
-		User userToAdd = userRepository.findFirstByUsernameIgnoreCase(addPlayerAccess.getName()).orElse(null);
-
-		if (userToAdd == null) {
+		if (note.getUsersWithAccess().stream().anyMatch(o -> o.getName().toUpperCase(Locale.ROOT).equals(addPlayerAccess.getName().toUpperCase(Locale.ROOT)))) {
 			return "redirect:/show_note/" + noteId;
 		}
 
+		UserWithAccess userToAdd = new UserWithAccess();
+		userToAdd.setName(addPlayerAccess.getName());
+		userToAdd = accessGrantedRepository.save(userToAdd);
+
 		note.getUsersWithAccess().add(userToAdd);
 		noteRepository.save(note);
+		log.info("USER ADDED");
 		return "redirect:/show_note/" + noteId;
 	}
 
