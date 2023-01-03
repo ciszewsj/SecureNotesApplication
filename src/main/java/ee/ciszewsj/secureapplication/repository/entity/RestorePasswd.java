@@ -13,7 +13,7 @@ import java.util.UUID;
 @Getter
 public class RestorePasswd {
 	@Id
-	@Column(name = "id", length = 36, unique = true, nullable = false)
+	@Column(length = 36, unique = true, nullable = false)
 	private String id = UUID.randomUUID().toString();
 
 	private Date validTime;
