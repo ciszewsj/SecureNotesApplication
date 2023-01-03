@@ -27,8 +27,6 @@ services:
     volumes:
       - ./conf/application.properties.d/nbs-vision-profiles-rest-server/application.properties:/tmp/nbs-vision-profiles-rest-server/application.properties:rw
       - ./conf/note-app/application.properties:/app/application.properties:rw
-    ports:
-      - 9030:8030
     networks:
       sec-net:
         ipv4_address: 192.168.4.3
