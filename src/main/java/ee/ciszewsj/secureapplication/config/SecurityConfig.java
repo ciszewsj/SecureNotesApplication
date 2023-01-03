@@ -96,6 +96,9 @@ public class SecurityConfig {
 		@Autowired
 		private LoginLogRepository loginLogRepository;
 
+		@Autowired
+		private IpService ipService;
+
 		@SneakyThrows
 		@Override
 		public void onApplicationEvent(AuthenticationFailureBadCredentialsEvent e) {
@@ -105,6 +108,7 @@ public class SecurityConfig {
 					User loadUser = userRepository.findFirstByUsernameIgnoreCase(user).orElse(null);
 					if (loadUser != null) {
 						LoginLog loginLog = new LoginLog();
+						loginLog.setIp(ipService.getClientIP());
 						loginLog.setOperation("login");
 						loginLog.setResult("FAILURE");
 						loginLog.setUser(loadUser);
@@ -141,6 +145,10 @@ public class SecurityConfig {
 		@Autowired
 		private LoginLogRepository loginLogRepository;
 
+
+		@Autowired
+		private IpService ipService;
+
 		@Override
 		public void onApplicationEvent(final AuthenticationSuccessEvent e) {
 			final String xfHeader = request.getHeader("X-Forwarded-For");
@@ -151,6 +159,7 @@ public class SecurityConfig {
 					User loadUser = userRepository.findFirstByUsernameIgnoreCase(user).orElse(null);
 					if (loadUser != null) {
 						LoginLog loginLog = new LoginLog();
+						loginLog.setIp(ipService.getClientIP());
 						loginLog.setOperation("login");
 						loginLog.setResult("SUCCESS");
 						loginLog.setUser(loadUser);

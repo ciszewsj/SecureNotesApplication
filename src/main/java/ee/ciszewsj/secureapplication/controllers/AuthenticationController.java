@@ -138,6 +138,7 @@ public class AuthenticationController {
 
 
 		LoginLog loginLog = new LoginLog();
+		loginLog.setIp(ipService.getClientIP());
 		loginLog.setOperation("activate");
 		loginLog.setResult("SUCCESS");
 		loginLog.setUser(a);
@@ -172,6 +173,9 @@ public class AuthenticationController {
 			model.addAttribute("error", true);
 			return "restore_passwd";
 		}
+
+		restorePasswdRepository.deleteAll(restorePasswdRepository.findAllByUserId(user.getId()));
+
 		try {
 			RestorePasswd restorePasswd = new RestorePasswd();
 			restorePasswd.setUser(user);
@@ -185,6 +189,7 @@ public class AuthenticationController {
 
 		LoginLog loginLog = new LoginLog();
 		loginLog.setOperation("Reset_passwd_request");
+		loginLog.setIp(ipService.getClientIP());
 		loginLog.setResult("REQUESTED");
 		loginLog.setUser(user);
 		loginLog.setDate(new Date().toString());
@@ -238,6 +243,7 @@ public class AuthenticationController {
 		restorePasswdRepository.delete(restorePasswd);
 
 		LoginLog loginLog = new LoginLog();
+		loginLog.setIp(ipService.getClientIP());
 		loginLog.setOperation("reset_passwd");
 		loginLog.setResult("SUCCESS");
 		loginLog.setUser(user);
